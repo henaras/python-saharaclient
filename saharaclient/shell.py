@@ -343,6 +343,13 @@ class OpenStackSaharaShell(object):
                             default=cliutils.env('OS_TENANT_ID'),
                             help='Defaults to env[OS_TENANT_ID].')
 
+        parser.add_argument('--os-region-name',
+                            metavar='<region-name>',
+                            default=cliutils.env('OS_REGION_NAME', 'SAHARA_REGION_NAME'),
+                            help='Defaults to env[OS_REGION_NAME].')
+        parser.add_argument('--os_region_name',
+                            help=argparse.SUPPRESS)
+
         parser.add_argument('--os-auth-system',
                             default=cliutils.env('OS_AUTH_SYSTEM'),
                             help='Defaults to env[OS_AUTH_SYSTEM].')
@@ -486,10 +493,11 @@ class OpenStackSaharaShell(object):
 #                        args.os_cacert, args.timeout)
         (os_username, os_tenant_name, os_tenant_id,
          os_auth_url, os_auth_system, endpoint_type,
-         service_type, bypass_url, os_cacert, insecure) = (
+         service_type, bypass_url, os_cacert, insecure, os_region_name) = (
             (args.os_username, args.os_tenant_name, args.os_tenant_id,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
-             args.service_type, args.bypass_url, args.os_cacert, args.insecure)
+             args.service_type, args.bypass_url, args.os_cacert, args.insecure,
+             args.os_region_name)
         )
 
         if os_auth_system and os_auth_system != "keystone":
@@ -646,7 +654,8 @@ class OpenStackSaharaShell(object):
                                 auth=keystone_auth,
                                 cacert=os_cacert,
                                 insecure=insecure,
-                                service_type=service_type)
+                                service_type=service_type,
+                                region_name=os_region_name)
 
         args.func(self.cs, args)
 

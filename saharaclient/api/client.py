@@ -87,7 +87,17 @@ class Client(object):
                 catalog = keystone.service_catalog.get_endpoints(service_type)
 
             if service_type in catalog:
-                for e_type, endpoint in catalog.get(service_type)[0].items():
+                entry = None
+                if region_name is None:
+                    entry = catalog.get(service_type)[0]
+                else:
+                    for e in catalog.get(service_type):
+                        if e['region'] == region_name:
+                            entry = e
+                if entry is None:
+                    raise RuntimeError("Could not find Sahara endpoint in catalog")
+
+                for e_type, endpoint in entry.items():
                     if str(e_type).lower() == str(endpoint_type).lower():
                         sahara_catalog_url = endpoint
                         break
